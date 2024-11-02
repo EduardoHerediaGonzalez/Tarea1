@@ -9,10 +9,10 @@ module testbench;
   localparam TOTAL_OF_CLK_CYCLES = 10;
   
   bit clk;
-  reg [(D_BUS_WIDTH - 1):0] test_data1;
-  reg [(D_BUS_WIDTH - 1):0] test_data2;
-  reg [(D_BUS_WIDTH - 1):0] result;
-  reg [(C_BUS_WIDTH - 1):0] test_data3;
+  bit [(D_BUS_WIDTH - 1):0] test_data1;
+  bit [(D_BUS_WIDTH - 1):0] test_data2;
+  bit [(C_BUS_WIDTH - 1):0] test_data3;
+  logic [(D_BUS_WIDTH - 1):0] result;
   integer cycle_clk_counter = 0;
   
   ALU #(.D_BUS_WIDTH(D_BUS_WIDTH), .C_BUS_WIDTH(C_BUS_WIDTH)) alu(
@@ -28,42 +28,36 @@ module testbench;
   end
   
   //Process that generate a clock pulse
-  always begin
-    #10 clk = ~clk;
-    //$display("Time: %t Clock state: %d", $time, clk);
-  end
+  always #10 clk = ~clk;
   
 
   //Infinity Process 1
   always @(posedge clk) begin
-    if (cycle_clk_counter < TOTAL_OF_CYCLES_TO_SHOW_DATA) begin
-      #2 std::randomize(test_data1);
-      
-      $display("Test data 1: %d", test_data1);
-      $display();
-    end
+    if (cycle_clk_counter < TOTAL_OF_CYCLES_TO_SHOW_DATA) 
+      std::randomize(test_data1);
   end
   
   //Infinity Process 2
   always @(posedge clk) begin
-    if (cycle_clk_counter < TOTAL_OF_CYCLES_TO_SHOW_DATA) begin
-      #1 std::randomize(test_data2);
-      
-      $display("Test data 2: %d", test_data2);
-    end
+    if (cycle_clk_counter < TOTAL_OF_CYCLES_TO_SHOW_DATA) 
+      std::randomize(test_data2);
   end
   
   //Infinity Process 3
   always @(posedge clk) begin
-    if (cycle_clk_counter < TOTAL_OF_CYCLES_TO_SHOW_DATA) begin
+    if (cycle_clk_counter < TOTAL_OF_CYCLES_TO_SHOW_DATA) 
       std::randomize(test_data3);
-      
-      $display("# Clock pulse: %0d", cycle_clk_counter + 1);
-      $display("Test data 3: %d", test_data3);
-    end
   end
   
   //Infinity Process 4
+  always @(posedge clk) begin
+    $display("# Clock pulse: %0d", cycle_clk_counter + 1);
+    $display("Test data 3: %d", test_data3);
+    $display("Test data 2: %d", test_data2);
+    $display("Test data 1: %d", test_data1);
+  end
+  
+  //Infinity Process 5
   always @(posedge clk) begin
     cycle_clk_counter = cycle_clk_counter + 1;
     
